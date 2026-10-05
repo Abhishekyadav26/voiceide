@@ -1,19 +1,40 @@
 /// <reference lib="webworker" />
 /* Worker wrapper: uses solc npm package compiled output via dynamic ESM CDN import.
    Keeps UI thread free; falls back to clear error offline. */
-import { resolveImportUrl } from './imports-shim';
+import { resolveImportUrl, fileNameForUrl } from './imports-shim';
 
 declare const self: DedicatedWorkerGlobalScope;
 
 interface SolcJson { compile: (input: string) => string }
 
+interface SolcJson { compile: (input: string) => string }
+
+interface EmscriptenModule {
+  cwrap: (fn: string, returnType: string, argTypes: string[]) => (input: string) => string;
+  calledRun?: boolean;
+  onRuntimeInitialized?: () => void;
+}
+
+/* soljson.js is a classic (non-ESM) emscripten script: it must be loaded with
+   importScripts, which populates self.Module. Awaiting a dynamic ESM import of
+   it yields a namespace without a callable factory ("factory is not a function"). */
 async function loadSolc(version: string): Promise<SolcJson> {
-  const url = `https://cdn.jsdelivr.net/npm/solc@${version}/soljson.js`;
-  const mod = await import(/* webpackIgnore: true */ url);
-  const factory = mod.default ?? mod;
-  const instance = await factory();
-  const compile = instance.cwrap('solidity_compile', 'string', ['string']) as (input: string) => string;
-  return { compile };
+  if (cached && cached.version === version) return cached.solc;
+  // Built dynamically so the bundler leaves it as a runtime URL.
+  const base = 'https://cdn.jsdelivr.net/npm/solc@';
+  const url = `${base}${version}/soljson.js`;
+  const g = self as unknown as { importScripts: (...urls: string[]) => void; Module?: EmscriptenModule };
+  g.importScripts(url);
+  const Module = g.Module;
+  if (!Module) throw new Error(`solc ${version} failed to initialize (no Module after loading ${url}). Check network access to jsDelivr.`);
+  await new Promise<void>((resolve) => {
+    if (Module.calledRun) resolve();
+    else Module.onRuntimeInitialized = (): void => resolve();
+  });
+  const compile = Module.cwrap('solidity_compile', 'string', ['string']) as (input: string) => string;
+  const solc = { compile };
+  cached = { version, solc };
+  return solc;
 }
 
 let cached: { version: string; solc: SolcJson } | null = null;
@@ -39,7 +60,7 @@ self.onmessage = async (e: MessageEvent) => {
         const imp = m[1] as string;
         const url = resolveImportUrl(path, imp);
         if (!url || url.startsWith('local:')) continue;
-        const fileName = '@openzeppelin/contracts/' + (url.split('/contracts/')[1] ?? imp);
+        const fileName = fileNameForUrl(url, imp);
         if (seen.has(fileName)) continue;
         seen.add(fileName);
         post({ id: msg.id, type: 'progress', message: `Fetching ${imp}…` });
