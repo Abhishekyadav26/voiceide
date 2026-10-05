@@ -1,0 +1,17 @@
+# dependencies
+node_modules/
+
+# next
+.next/
+out/
+
+# env (never commit real keys)
+.env
+.env*.local
+
+# misc
+*.tsbuildinfo
+next-env.d.ts
+test-results/
+playwright-report/
+.DS_Store
