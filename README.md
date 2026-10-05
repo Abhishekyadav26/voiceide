@@ -8,7 +8,8 @@ Speak Solidity, ship on Base Sepolia. Dictate commands (via Wispr Flow) into the
 npm install
 cp .env.example .env   # fill in keys
 npm run dev            # http://localhost:3000 (landing), /app (IDE), /showcase
-npm test               # vitest
+npm test               # vitest (32 tests)
+npx playwright test    # 16 screenshot tests + browser compile test → /screenshots
 npm run build
 ```
 
@@ -43,6 +44,43 @@ dictate (Wispr Flow) → command bar → /api/parse (Claude JSON + Zod)
   → verify: /api/verify (Etherscan V2, chain 84532) → poll status
   → interact: ABI forms (view calls run, writes confirm first)
 ```
+
+## Screenshots
+
+Landing variants (1440px) — mobile 375px versions alongside in [`/screenshots`](./screenshots):
+
+| terminal (`/?landing=terminal`) | clean (`/?landing=clean`) |
+|---|---|
+| ![terminal landing](./screenshots/landing-terminal-1440.png) | ![clean landing](./screenshots/landing-clean-1440.png) |
+
+| gradient (`/?landing=gradient`) | editorial (`/?landing=editorial`) |
+|---|---|
+| ![gradient landing](./screenshots/landing-gradient-1440.png) | ![editorial landing](./screenshots/landing-editorial-1440.png) |
+
+IDE layouts (1440px) — each also captured at 375px in [`/screenshots`](./screenshots).
+Under 1100px wide the IDE falls back to the split layout.
+
+| classic (`/app?layout=classic`) | command-first (`/app?layout=command-first`) |
+|---|---|
+| ![classic layout](./screenshots/layout-classic-1440.png) | ![command-first layout](./screenshots/layout-command-first-1440.png) |
+
+| split (`/app?layout=split`) | wizard (`/app?layout=wizard`) |
+|---|---|
+| ![split layout](./screenshots/layout-split-1440.png) | ![wizard layout](./screenshots/layout-wizard-1440.png) |
+
+Regenerate with `npx playwright test tests/e2e/shots.spec.ts` (uses system Chrome).
+
+## Troubleshooting compile errors
+
+- `factory is not a function` → the worker failed to load solc from the CDN
+  (fixed: `soljson.js` is loaded via `importScripts`, not ESM import).
+  Check the browser is online — solc and OpenZeppelin sources come from jsDelivr.
+- `Source "@openzeppelin/..." not found` / `File not supplied initially` →
+  a transitive OZ import didn't resolve (fixed: relative imports inside the
+  OZ tree resolve against the pinned CDN). If offline, previously cached
+  sources in IndexedDB still work.
+- Anything else → open the Compiler tab for severity + file:line:column,
+  click an error to jump to the line, or dictate "fix the errors".
 
 ## Known limits
 
