@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import Anthropic from '@anthropic-ai/sdk';
+import Groq from 'groq-sdk';
 import { z } from 'zod';
 import { IntentSchema, ParseRequestSchema } from '@/lib/intents/schema';
 import { INTENT_SYSTEM_PROMPT, buildUserMessage } from '@/lib/intents/prompts';
@@ -8,7 +8,7 @@ import { APP_CONFIG } from '@/lib/config';
 
 export const runtime = 'nodejs';
 
-const client = (): Anthropic => new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY ?? '' });
+const client = (): Groq => new Groq({ apiKey: process.env.GROQ_API_KEY ?? '' });
 
 function fallbackParse(text: string): unknown {
   const t = text.toLowerCase();
@@ -46,7 +46,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   if (!parsed.success) return NextResponse.json({ error: 'Invalid request.', details: parsed.error.flatten() }, { status: 400 });
 
   const { text, activeFile, fileList, activeCode, compilerOutput, deployments } = parsed.data;
-  if (!process.env.ANTHROPIC_API_KEY) {
+  if (!process.env.GROQ_API_KEY) {
     const fb = fallbackParse(text);
     const v = IntentSchema.safeParse(fb);
     if (!v.success) return NextResponse.json({ intent: 'clarify', question: 'Could you rephrase that?' });
@@ -58,14 +58,17 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       activeCode: activeCode.slice(0, APP_CONFIG.maxLlmInputChars),
       compilerOutput, deployments,
     };
-    const msg = await client().messages.create({
+    const completion = await client().chat.completions.create({
       model: APP_CONFIG.model,
       max_tokens: 4000,
-      system: INTENT_SYSTEM_PROMPT,
-      messages: [{ role: 'user', content: buildUserMessage({ ...capped, heard: capped.text }) }],
+      temperature: 0,
+      response_format: { type: 'json_object' },
+      messages: [
+        { role: 'system', content: INTENT_SYSTEM_PROMPT },
+        { role: 'user', content: buildUserMessage({ ...capped, heard: capped.text }) },
+      ],
     });
-    const block = msg.content.find((b) => b.type === 'text');
-    const raw = block && 'text' in block ? block.text.trim().replace(/^```json\s*|\s*```$/g, '') : '{}';
+    const raw = (completion.choices[0]?.message?.content ?? '{}').trim().replace(/^```json\s*|\s*```$/g, '');
     let json: unknown;
     try {
       json = JSON.parse(raw) as unknown;

@@ -17,16 +17,16 @@ npm run build
 
 | Var | Purpose |
 |---|---|
-| `ANTHROPIC_API_KEY` | Claude intent parsing + explain/audit/fix (server-side only) |
+| `GROQ_API_KEY` | Groq intent parsing + explain/audit/fix (server-side only; get one at console.groq.com) |
+| `GROQ_MODEL` | LLM model (default `llama-3.3-70b-versatile`) |
 | `NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID` | RainbowKit wallet connect |
 | `ETHERSCAN_API_KEY` | Basescan/Etherscan V2 verification (server-side only) |
 | `NEXT_PUBLIC_CHAIN_ID` | 84532 (Base Sepolia) |
 | `NEXT_PUBLIC_RPC_URL` | https://sepolia.base.org |
 | `NEXT_PUBLIC_EXPLORER_URL` | https://sepolia.basescan.org |
 | `NEXT_PUBLIC_SOLC_VERSION` | 0.8.24 |
-| `NEXT_PUBLIC_ANTHROPIC_MODEL` | claude-3-5-sonnet-20240620 |
 
-Without `ANTHROPIC_API_KEY`, the parse route uses a local keyword fallback.
+Without `GROQ_API_KEY`, the parse route uses a local keyword fallback.
 
 ## Testnet ETH
 

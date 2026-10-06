@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import Anthropic from '@anthropic-ai/sdk';
+import Groq from 'groq-sdk';
 import { z } from 'zod';
 import { rateLimit, sanitizeLog } from '@/lib/ratelimit';
 import { APP_CONFIG } from '@/lib/config';
@@ -24,17 +24,19 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   const body = await req.json().catch(() => null);
   const parsed = Body.safeParse(body);
   if (!parsed.success) return NextResponse.json({ error: 'Invalid request.' }, { status: 400 });
-  if (!process.env.ANTHROPIC_API_KEY) return NextResponse.json({ error: 'ANTHROPIC_API_KEY not configured.' }, { status: 503 });
+  if (!process.env.GROQ_API_KEY) return NextResponse.json({ error: 'GROQ_API_KEY not configured.' }, { status: 503 });
   try {
-    const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
-    const msg = await client.messages.create({
+    const client = new Groq({ apiKey: process.env.GROQ_API_KEY });
+    const completion = await client.chat.completions.create({
       model: APP_CONFIG.model,
       max_tokens: 4000,
-      system: PROMPTS[parsed.data.mode] ?? PROMPTS.explain,
-      messages: [{ role: 'user', content: `Code:\n${parsed.data.code.slice(0, 20000)}\n\nErrors:\n${parsed.data.errors.slice(0, 4000)}` }],
+      temperature: 0.2,
+      messages: [
+        { role: 'system', content: PROMPTS[parsed.data.mode] ?? (PROMPTS.explain as string) },
+        { role: 'user', content: `Code:\n${parsed.data.code.slice(0, 20000)}\n\nErrors:\n${parsed.data.errors.slice(0, 4000)}` },
+      ],
     });
-    const block = msg.content.find((b) => b.type === 'text');
-    return NextResponse.json({ text: block && 'text' in block ? block.text : '' });
+    return NextResponse.json({ text: completion.choices[0]?.message?.content ?? '' });
   } catch (e) {
     console.error('assist route:', sanitizeLog(String(e)));
     return NextResponse.json({ error: 'Assistant unavailable.' }, { status: 502 });
