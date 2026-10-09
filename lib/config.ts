@@ -7,7 +7,7 @@ export const APP_CONFIG = {
   ozCdnBase: 'https://cdn.jsdelivr.net/npm/@openzeppelin/contracts@5.0.2/',
   model: process.env.GROQ_MODEL ?? 'llama-3.3-70b-versatile',
   maxLlmInputChars: Number(process.env.NEXT_PUBLIC_MAX_LLM_INPUT_CHARS ?? 24000),
-  faucetUrl: 'https://www.coinbase.com/faucets/base-ethereum-goerli-faucet',
+  faucetUrl: 'https://www.coinbase.com/faucets/base-ethereum-sepolia-faucet',
   maxFixAttempts: 3,
   maxUndoPerFile: 20,
   bytecodeSizeWarnBytes: 24 * 1024,
