@@ -3,35 +3,13 @@ import Groq from 'groq-sdk';
 import { z } from 'zod';
 import { IntentSchema, ParseRequestSchema } from '@/lib/intents/schema';
 import { INTENT_SYSTEM_PROMPT, buildUserMessage } from '@/lib/intents/prompts';
+import { fallbackParse } from '@/lib/intents/fallback';
 import { rateLimit, sanitizeLog } from '@/lib/ratelimit';
 import { APP_CONFIG } from '@/lib/config';
 
 export const runtime = 'nodejs';
 
 const client = (): Groq => new Groq({ apiKey: process.env.GROQ_API_KEY ?? '' });
-
-function fallbackParse(text: string): unknown {
-  const t = text.toLowerCase();
-  if (/compile|build it/.test(t)) return { intent: 'compile' };
-  if (/fix.*error|fix it/.test(t)) return { intent: 'fix_errors' };
-  if (/explain|what does/.test(t)) return { intent: 'explain' };
-  if (/audit|vulnerab|security/.test(t)) return { intent: 'audit' };
-  if (/deploy/.test(t)) return { intent: 'deploy' };
-  if (/verify|verif/.test(t)) return { intent: 'verify' };
-  if (/undo|revert/.test(t)) return { intent: 'undo' };
-  if (/next step/.test(t)) return { intent: 'navigate_step', direction: 'next' };
-  if (/go back|previous step/.test(t)) return { intent: 'navigate_step', direction: 'back' };
-  if (/call\s+(\w+)/.test(t)) {
-    const m = t.match(/call\s+(\w+)/);
-    return { intent: 'call_function', functionName: m?.[1], functionArgs: [] };
-  }
-  if (/erc-?20|erc-?721|erc-?1155|vault|multisig|crowdfund/.test(t)) {
-    const template = /721/.test(t) ? 'erc721' : /1155/.test(t) ? 'erc1155' : /vault/.test(t) ? 'vault' : /multisig/.test(t) ? 'multisig' : /crowdfund/.test(t) ? 'crowdfunding' : 'erc20';
-    return { intent: 'set_template', template };
-  }
-  if (/write|create/.test(t)) return { intent: 'write_contract', description: text.slice(0, 500) };
-  return { intent: 'clarify', question: 'What should I do — write, compile, deploy, or call a function?' };
-}
 
 export async function POST(req: NextRequest): Promise<NextResponse> {
   const ip = req.headers.get('x-forwarded-for') ?? 'local';

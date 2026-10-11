@@ -43,6 +43,37 @@ async function assist(mode: 'explain' | 'audit' | 'fix', code: string, errors: s
   return json.text ?? '';
 }
 
+/** Derive a safe contract name when the parser returned no code/template (local fallback path). */
+function starterContractName(intent: Intent, rawText: string): string {
+  const hint = (intent.contractName ?? '').trim();
+  if (hint) {
+    const compact = hint.replace(/[^A-Za-z0-9\s]/g, ' ').split(/\s+/).filter(Boolean).slice(0, 2).join('');
+    if (/^[A-Za-z][A-Za-z0-9]*$/.test(compact)) return compact.charAt(0).toUpperCase() + compact.slice(1);
+  }
+  const hay = `${intent.description ?? ''} ${rawText}`.toLowerCase();
+  if (/\bhello\b|\bhi\b|\bgreet/.test(hay)) return 'Hello';
+  return 'MyContract';
+}
+
+/** Minimal compilable starter so voice input always lands in the editor, even without the AI parser. */
+function starterContractCode(name: string, rawText: string): string {
+  const greeting = name === 'Hello' ? 'Hello' : `Hello from ${name}`;
+  return `// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.20;
+
+/// @title ${name} — starter contract
+/// @notice Generated locally from voice command: "${rawText.slice(0, 120)}". Review before compiling.
+contract ${name} {
+    string public greeting = "${greeting}";
+
+    /// @notice Update the greeting.
+    function setGreeting(string calldata next) external {
+        greeting = next;
+    }
+}
+`;
+}
+
 export function CommandBar(): JSX.Element {
   const { files, activeFile, compileResult, deployments, commands, logCommand, setPendingDiff, upsertFile, applyIntent, setExplain, setAudit, fixAttempts, setFixAttempts } = useIde();
   const [text, setText] = useState('');
@@ -69,7 +100,15 @@ export function CommandBar(): JSX.Element {
           s.setPendingDiff({ fileName: intent.fileName ?? t.fileName, before: s.files.find((f) => f.name === t.fileName)?.content ?? '', after: code, label: `template:${intent.template}` });
           setUnderstood(`parsed as ${intent.intent} (${intent.template}) → diff ready`);
         } else {
-          setUnderstood('parsed as write_contract but no code returned — clarify');
+          const name = starterContractName(intent, rawText);
+          const fileName = intent.fileName ?? `${name}.sol`;
+          s.setPendingDiff({
+            fileName,
+            before: s.files.find((f) => f.name === fileName)?.content ?? '',
+            after: starterContractCode(name, rawText),
+            label: 'write_contract:starter',
+          });
+          setUnderstood(`parsed as write_contract (local starter ${name}) → diff ready for review (Esc to cancel)`);
         }
         break;
       }
@@ -185,10 +224,10 @@ export function CommandBar(): JSX.Element {
       )}
       <div className="flex gap-2">
         <input
-          autoFocus className="vs-input" placeholder='Dictate via Wispr Flow, then press Ctrl+Enter — e.g. "write an ERC-20 called Sol Coin…"'
+          autoFocus className="vs-input"            placeholder='Dictate via Wispr Flow, then press Enter — e.g. "write an ERC-20 called Sol Coin…"'
           value={text} onChange={(e) => setText(e.target.value)}
           onKeyDown={(e) => {
-            if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') run();
+            if (e.key === 'Enter') { e.preventDefault(); void run(); }
             if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's') { e.preventDefault(); void useIde.getState().persist(); }
           }}
           aria-label="Voice command bar" disabled={busy}

@@ -37,7 +37,7 @@ Without `GROQ_API_KEY`, the parse route uses a local keyword fallback.
 ## Flow diagram
 
 ```
-dictate (Wispr Flow) → command bar → /api/parse (Claude JSON + Zod)
+dictate (Wispr Flow) → command bar → /api/parse (Groq JSON + Zod)
   → write/edit: diff modal → Accept/Reject (undo stack 20/file)
   → compile: Web Worker solc 0.8.24 + OZ jsDelivr imports + IndexedDB cache
   → deploy: constructor form → wallet signs → receipt → Basescan link
