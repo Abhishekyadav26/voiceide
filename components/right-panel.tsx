@@ -62,7 +62,7 @@ function CompilerTab(): JSX.Element {
 }
 
 function DeployTab(): JSX.Element {
-  const { compileResult, constructorArgs, setConstructorArgs, addDeployment } = useIde();
+  const { compileResult, constructorArgs, setConstructorArgs, addDeployment, files } = useIde();
   const chainId = useChainId();
   const { address } = useAccount();
   const { data: balance } = useBalance({ address });
@@ -75,7 +75,15 @@ function DeployTab(): JSX.Element {
   const [busy, setBusy] = useState(false);
 
   const contracts = compileResult?.contracts ?? [];
-  const current = contracts.find((c) => c.name === sel) ?? contracts[0];
+  const hasBytecode = (c: { bytecode?: string }): boolean => !!c.bytecode && c.bytecode !== '0x';
+  // Prefer the user's own concrete contract — the compile output also lists
+  // OpenZeppelin internals, some with no deployment bytecode (abstract/interface).
+  const userFiles = new Set(files.map((f) => f.name));
+  const preferred = contracts.find((c) => hasBytecode(c) && userFiles.has(c.name.split(':')[0] ?? ''))
+    ?? contracts.find((c) => hasBytecode(c))
+    ?? contracts[0];
+  const current = contracts.find((c) => c.name === sel) ?? preferred;
+  const currentDeployable = !!current && hasBytecode(current);
   const inputs = current ? getConstructorInputs(current.abi) : [];
   const args: string[] = (current && constructorArgs[current.name]) ?? inputs.map(() => '');
   const argsValid = inputs.every((inp, i) => validateArg(inp.type, args[i] ?? '').ok);
@@ -86,6 +94,7 @@ function DeployTab(): JSX.Element {
 
   const deploy = async (): Promise<void> => {
     if (!current || !wallet || !publicClient || !address) { setStatus('Connect a wallet first.'); return; }
+    if (!hasBytecode(current)) { setStatus(`Cannot deploy ${current.name}: it has no deployment bytecode (abstract contract or interface). Select your contract from the list instead.`); return; }
     if (chainId !== APP_CONFIG.chainId) { setStatus(`Refusing: wallet on chain ${chainId}, expected ${APP_CONFIG.chainId}.`); return; }
     if (!window.confirm(`Deploy ${current.name} to Base Sepolia with args [${args.join(', ')}]? This sends a transaction.`)) return;
     setBusy(true); setStatus('Sending deployment…');
@@ -110,8 +119,9 @@ function DeployTab(): JSX.Element {
     <div className="space-y-2 text-xs">
       {!compileResult?.success && <div className="vs-card">Compile successfully first (no errors).</div>}
       <select className="vs-input" value={current?.name ?? ''} onChange={(e) => setSel(e.target.value)} aria-label="Contract to deploy">
-        {contracts.map((c) => <option key={c.name} value={c.name}>{c.name}</option>)}
+        {contracts.map((c) => <option key={c.name} value={c.name}>{c.name}{hasBytecode(c) ? '' : ' (no bytecode)'}</option>)}
       </select>
+      {current && !currentDeployable && <div className="vs-card">⚠️ {current.name} has no deployment bytecode (abstract contract or interface) — pick your contract from the list.</div>}
       {inputs.map((inp, i) => {
         const v = validateArg(inp.type, args[i] ?? '');
         return (
@@ -124,7 +134,7 @@ function DeployTab(): JSX.Element {
       })}
       {!gate.enabled && <ul className="vs-card list-disc pl-4">{gate.reasons.map((r) => <li key={r}>{r}</li>)}</ul>}
       {current && <div className="vs-card">Summary: {current.name} · Base Sepolia · args [{args.join(', ')}] · est. gas ~500k</div>}
-      <button className="vs-btn w-full" disabled={!gate.enabled || busy} onClick={() => void deploy()}>
+      <button className="vs-btn w-full" disabled={!gate.enabled || !currentDeployable || busy} onClick={() => void deploy()}>
         {busy ? 'Deploying…' : 'Deploy (wallet signs)'}
       </button>
       {status && <div className="vs-card break-all">{status}</div>}
