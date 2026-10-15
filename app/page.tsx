@@ -6,6 +6,7 @@ import { useDesign, type LandingVariant } from '@/lib/store/design';
 import { Marquee } from '@/components/magic/marquee';
 import { ShimmerButton } from '@/components/magic/shimmer-button';
 import { ShinyText } from '@/components/magic/shiny-text';
+import { GlowingCards } from '@/components/glowing-cards';
 
 const COPY = {
   headline: 'Speak Solidity. Ship on Base Sepolia.',
@@ -172,12 +173,6 @@ const MB_TEMPLATES: [string, string][] = [
   ['Multisig', 'M-of-N approval wallet'],
   ['Crowdfunding', 'Goal + deadline campaign'],
 ];
-const MB_STEPS: [string, string, string][] = [
-  ['01 / SPEAK', 'Speak', 'Dictate via Wispr Flow — “write a hello contract”, “compile”, “deploy”.'],
-  ['02 / REVIEW', 'Review', 'Every change arrives as a diff. Accept what you want, reject the rest.'],
-  ['03 / COMPILE', 'Compile', 'solc 0.8.24 runs in a Web Worker with OpenZeppelin imports resolved.'],
-  ['04 / DEPLOY', 'Deploy', 'Your wallet signs on Base Sepolia. Verify on Basescan in one click.'],
-];
 
 function MbCode(): JSX.Element {
   const kw = '#c792ea'; const str = '#9ece6a'; const com = '#565f89'; const fn = '#e0af68'; const pl = '#c0caf5'; const ty = '#7dcfff';
@@ -341,16 +336,8 @@ function Metabox(): JSX.Element {
       </section>
 
       <section className="max-w-6xl mx-auto px-6 pb-20">
-        <p className="mb-eyebrow text-center">FROM VOICE TO BASE SEPOLIA IN FOUR STEPS</p>
-        <div className="grid sm:grid-cols-2 md:grid-cols-4 gap-3 mt-6">
-          {MB_STEPS.map(([n, t, d]) => (
-            <div key={t} className="mb-step">
-              <div className="mb-step-num">{n}</div>
-              <b className="block mt-2 text-lg">{t}</b>
-              <p className="text-sm mt-1" style={{ color: 'rgba(244,244,245,0.65)' }}>{d}</p>
-            </div>
-          ))}
-        </div>
+        <p className="mb-eyebrow text-center">FROM VOICE TO BASE SEPOLIA</p>
+        <div className="mt-6"><GlowingCards /></div>
         <div className="text-center mt-10"><ShimmerButton onClick={goApp} shimmerColor="#ffffff" background="rgba(244,244,245,0.08)"><span style={{ color: '#fff' }}>{COPY.cta}</span> <span aria-hidden style={{ color: '#fff' }}>→</span></ShimmerButton></div>
       </section>
 
