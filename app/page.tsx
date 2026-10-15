@@ -317,7 +317,7 @@ function Metabox(): JSX.Element {
           <p className="mt-4 max-w-xl text-sm leading-relaxed" style={{ opacity: 0.8 }}>
             After deployment, submit standard JSON to Basescan from the Deploy tab and poll until it reads “Verified”. AI reviews are clearly labeled — never a security audit.
           </p>
-          <Link className="mb-cta mt-8" style={{ borderColor: 'rgba(0,0,0,0.4)', color: '#0c1a0b' }} href="/app">Try a deploy <span aria-hidden>→</span></Link>
+          <Link className="mb-cta mt-8" href="/app">Try a deploy <span aria-hidden>→</span></Link>
         </div>
       </section>
 
