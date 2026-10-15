@@ -67,7 +67,7 @@ body { font-family: var(--vs-font); }
 .glass { background: var(--vs-card); backdrop-filter: blur(12px); border: 1px solid var(--vs-border); }
 
 /* Metabox-style landing (VoiceSol) — self-contained, theme-independent */
-.mb-page { background: #0a0a0d; color: #f4f4f5; font-family: 'Inter', system-ui, -apple-system, sans-serif; }
+.mb-page { background: transparent; color: #f4f4f5; font-family: 'Inter', system-ui, -apple-system, sans-serif; }
 .mb-dots { background-image: radial-gradient(rgba(255,255,255,0.12) 1px, transparent 1.3px); background-size: 26px 26px; }
 .mb-grad { background: linear-gradient(95deg, #c9d4ff 5%, #8fd8fc 50%, #5eead4 95%); -webkit-background-clip: text; background-clip: text; color: transparent; }
 .mb-accent { color: #5eead4; }
@@ -89,7 +89,7 @@ body { font-family: var(--vs-font); }
 .mb-window-bar { display: flex; align-items: center; gap: 0.4rem; padding: 0.6rem 0.9rem; border-bottom: 1px solid rgba(255,255,255,0.08); font-size: 0.7rem; color: rgba(244,244,245,0.6); }
 .mb-traffic { width: 0.6rem; height: 0.6rem; border-radius: 9999px; }
 .mb-code { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 0.72rem; line-height: 1.65; }
-.mb-band-blue { background: #0a0a0d; color: #f4f4f5; border-top: 1px solid rgba(255,255,255,0.1); border-bottom: 1px solid rgba(255,255,255,0.1); }
+.mb-band-blue { background: transparent; color: #f4f4f5; border-top: 1px solid rgba(255,255,255,0.1); border-bottom: 1px solid rgba(255,255,255,0.1); }
 .mb-tcard { border: 1px solid rgba(255,255,255,0.14); background: rgba(255,255,255,0.04); border-radius: 0.75rem; padding: 1rem; }
 .mb-step { border: 1px solid rgba(255,255,255,0.12); background: rgba(255,255,255,0.04); border-radius: 0.75rem; padding: 1.25rem; }
 .mb-step-num { font-size: 0.7rem; letter-spacing: 0.25em; color: #5eead4; font-weight: 700; }
