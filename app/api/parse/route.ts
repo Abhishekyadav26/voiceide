@@ -3,7 +3,7 @@ import Groq from 'groq-sdk';
 import { z } from 'zod';
 import { IntentSchema, ParseRequestSchema } from '@/lib/intents/schema';
 import { INTENT_SYSTEM_PROMPT, buildUserMessage } from '@/lib/intents/prompts';
-import { fallbackParse } from '@/lib/intents/fallback';
+import { fallbackParse, repairVoice } from '@/lib/intents/fallback';
 import { rateLimit, sanitizeLog } from '@/lib/ratelimit';
 import { APP_CONFIG } from '@/lib/config';
 
@@ -23,7 +23,10 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   const parsed = ParseRequestSchema.safeParse(body);
   if (!parsed.success) return NextResponse.json({ error: 'Invalid request.', details: parsed.error.flatten() }, { status: 400 });
 
-  const { text, activeFile, fileList, activeCode, compilerOutput, deployments } = parsed.data;
+  const { text: rawText, activeFile, fileList, activeCode, compilerOutput, deployments } = parsed.data;
+  // Clean filler words and repair common STT mis-hearings ("the ploy" -> deploy)
+  // so both the local fallback and the AI parser see the intended command.
+  const text = repairVoice(rawText);
   if (!process.env.GROQ_API_KEY) {
     const fb = fallbackParse(text);
     const v = IntentSchema.safeParse(fb);

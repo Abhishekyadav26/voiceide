@@ -1,4 +1,20 @@
-import { normalizeSpokenName } from './normalize';
+import { normalizeSpokenName, cleanDictation } from './normalize';
+
+/**
+ * Repair common speech-to-text mis-hearings of command keywords before parsing.
+ * Conservative patterns only — things that mean nothing else in this IDE.
+ */
+export function repairVoice(text: string): string {
+  const t = ` ${cleanDictation(text)} `;
+  return t
+    .replace(/\bthe\s+ploy\b/g, ' deploy ')
+    .replace(/\bto\s+ploy\b/g, ' deploy ')
+    .replace(/\bdeploying\b|\bdeployment\b/g, ' deploy ')
+    .replace(/\bcome\s+pile\b/g, ' compile ')
+    .replace(/\bright\s+a\b/g, ' write a ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
 
 /** Pull a contract name out of dictation: "called Sol Coin" -> SolCoin, "hello …" -> Hello. */
 export function extractContractName(lower: string): string | undefined {
@@ -16,7 +32,7 @@ export function extractContractName(lower: string): string | undefined {
  * Always returns a plain object that IntentSchema accepts.
  */
 export function fallbackParse(text: string): unknown {
-  const t = text.toLowerCase();
+  const t = repairVoice(text);
   if (/compile|build it/.test(t)) return { intent: 'compile' };
   if (/fix.*error|fix it/.test(t)) return { intent: 'fix_errors' };
   if (/explain|what does/.test(t)) return { intent: 'explain' };
