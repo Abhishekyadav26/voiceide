@@ -1,6 +1,6 @@
 import Link from 'next/link';
 
-const LANDINGS = ['terminal', 'clean', 'gradient', 'editorial'];
+const LANDINGS = ['metabox', 'terminal', 'clean', 'gradient', 'editorial'];
 const LAYOUTS = ['classic', 'command-first', 'split', 'wizard'];
 
 export default function Showcase(): JSX.Element {

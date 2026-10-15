@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 
-const landings = ['terminal', 'clean', 'gradient', 'editorial'];
+const landings = ['metabox', 'terminal', 'clean', 'gradient', 'editorial'];
 const layouts = ['classic', 'command-first', 'split', 'wizard'];
 
 for (const l of landings) {

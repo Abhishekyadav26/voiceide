@@ -2,7 +2,8 @@
 import { useSearchParams, useRouter, usePathname } from 'next/navigation';
 import { useDesign, type LandingVariant, type IdeLayout } from '@/lib/store/design';
 
-const LANDINGS: LandingVariant[] = ['terminal', 'clean', 'gradient', 'editorial'];
+const LANDINGS: LandingVariant[] = ['metabox', 'terminal', 'clean', 'gradient', 'editorial'];
+const THEMES = ['terminal', 'clean', 'gradient', 'editorial'];
 const LAYOUTS: IdeLayout[] = ['classic', 'command-first', 'split', 'wizard'];
 
 export function DesignMenu(): JSX.Element {
@@ -33,7 +34,7 @@ export function DesignMenu(): JSX.Element {
       </label>
       <label>Theme
         <select className="vs-input ml-1" value={theme} onChange={(e) => setTheme(e.target.value as never)}>
-          {LANDINGS.map((l) => <option key={l} value={l}>{l}</option>)}
+          {THEMES.map((l) => <option key={l} value={l}>{l}</option>)}
         </select>
       </label>
       <button className="vs-btn-ghost" onClick={() => setMode(mode === 'dark' ? 'light' : 'dark')}>

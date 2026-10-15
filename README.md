@@ -49,6 +49,10 @@ dictate (Wispr Flow) → command bar → /api/parse (Groq JSON + Zod)
 
 Landing variants (1440px) — mobile 375px versions alongside in [`/screenshots`](./screenshots):
 
+| metabox (default, `/?landing=metabox`) |
+|---|
+| ![metabox landing](./screenshots/landing-metabox-1440.png) |
+
 | terminal (`/?landing=terminal`) | clean (`/?landing=clean`) |
 |---|---|
 | ![terminal landing](./screenshots/landing-terminal-1440.png) | ![clean landing](./screenshots/landing-clean-1440.png) |
@@ -103,7 +107,7 @@ Regenerate with `npx playwright test tests/e2e/shots.spec.ts` (uses system Chrom
 
 ## Variants
 
-- Landing: `/?landing=terminal|clean|gradient|editorial`
+- Landing: `/?landing=metabox|terminal|clean|gradient|editorial` (default `metabox`)
 - IDE layout: `/app?layout=classic|command-first|split|wizard`
 - Floating **Design** menu (demo mode) switches instantly; choice persists in localStorage.
 - `/showcase` grid links every combination. Playwright screenshots → `/screenshots`.

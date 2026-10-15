@@ -160,18 +160,211 @@ function Editorial(): JSX.Element {
   );
 }
 
+const MB_STACK = ['Base Sepolia · 84532', 'Solidity 0.8.24', 'OpenZeppelin v5', 'viem + wagmi', 'RainbowKit', 'Groq parsing', 'solc in-browser', 'Basescan verify'];
+const MB_TEMPLATES: [string, string][] = [
+  ['ERC-20', 'Fixed-supply fungible token'],
+  ['ERC-721', 'Capped-supply NFT collection'],
+  ['ERC-1155', 'Multi-token with per-id URIs'],
+  ['Vault', 'Simple ETH deposit vault'],
+  ['Multisig', 'M-of-N approval wallet'],
+  ['Crowdfunding', 'Goal + deadline campaign'],
+];
+const MB_STEPS: [string, string, string][] = [
+  ['01 / SPEAK', 'Speak', 'Dictate via Wispr Flow — “write a hello contract”, “compile”, “deploy”.'],
+  ['02 / REVIEW', 'Review', 'Every change arrives as a diff. Accept what you want, reject the rest.'],
+  ['03 / COMPILE', 'Compile', 'solc 0.8.24 runs in a Web Worker with OpenZeppelin imports resolved.'],
+  ['04 / DEPLOY', 'Deploy', 'Your wallet signs on Base Sepolia. Verify on Basescan in one click.'],
+];
+
+function MbCode(): JSX.Element {
+  const kw = '#c792ea'; const str = '#9ece6a'; const com = '#565f89'; const fn = '#e0af68'; const pl = '#c0caf5'; const ty = '#7dcfff';
+  const L = (n: number, body: React.ReactNode): JSX.Element => (
+    <div className="flex"><span className="w-8 shrink-0 text-right pr-3 select-none" style={{ color: '#3b3f5c' }}>{n}</span><span className="whitespace-pre">{body}</span></div>
+  );
+  return (
+    <div className="mb-code" style={{ color: pl }}>
+      {L(1, <span><span style={{ color: com }}>{'// Dictated: "write a hello contract"'}</span></span>)}
+      {L(2, <span><span style={{ color: kw }}>pragma solidity</span> ^0.8.20;</span>)}
+      {L(3, <span> </span>)}
+      {L(4, <span><span style={{ color: kw }}>contract</span> <span style={{ color: ty }}>Hello</span> {'{'}</span>)}
+      {L(5, <span>{'    '}<span style={{ color: ty }}>string</span> <span style={{ color: kw }}>public</span> greeting = <span style={{ color: str }}>{'"Hello"'}</span>;</span>)}
+      {L(6, <span> </span>)}
+      {L(7, <span>{'    '}<span style={{ color: kw }}>function</span> <span style={{ color: fn }}>setGreeting</span>(<span style={{ color: ty }}>string</span> <span style={{ color: kw }}>calldata</span> next) <span style={{ color: kw }}>external</span> {'{'}</span>)}
+      {L(8, <span>{'        '}greeting = next;</span>)}
+      {L(9, <span>{'    }'}</span>)}
+      {L(10, <span>{'}'}</span>)}
+    </div>
+  );
+}
+
+function EditorMock(): JSX.Element {
+  return (
+    <div className="mb-window">
+      <div className="mb-window-bar">
+        <span className="mb-traffic" style={{ background: '#ff5f57' }} />
+        <span className="mb-traffic" style={{ background: '#febc2e' }} />
+        <span className="mb-traffic" style={{ background: '#28c840' }} />
+        <span className="ml-2">VoiceSol IDE — Hello.sol</span>
+        <span className="ml-auto hidden sm:inline">Base Sepolia · 84532</span>
+      </div>
+      <div className="grid md:grid-cols-[180px_1fr_190px]">
+        <div className="hidden md:block p-3 text-xs border-r" style={{ borderColor: 'rgba(255,255,255,0.08)', color: 'rgba(244,244,245,0.7)' }}>
+          <div className="opacity-50 mb-2">FILES</div>
+          {['Hello.sol', 'SolCoin.sol', 'Vault.sol'].map((f, i) => (
+            <div key={f} className="px-2 py-1 rounded" style={i === 0 ? { background: 'rgba(94,234,212,0.12)', color: '#fff' } : undefined}>{f}</div>
+          ))}
+        </div>
+        <div className="p-4 overflow-x-auto"><MbCode /></div>
+        <div className="hidden md:block p-3 text-xs border-l space-y-2" style={{ borderColor: 'rgba(255,255,255,0.08)', color: 'rgba(244,244,245,0.7)' }}>
+          <div className="opacity-50">PANEL</div>
+          {['Compiler ✅ clean', 'Deploy → wallet', 'Interact ƒ balanceOf'].map((t) => (
+            <div key={t} className="px-2 py-1.5 rounded border" style={{ borderColor: 'rgba(255,255,255,0.1)' }}>{t}</div>
+          ))}
+        </div>
+      </div>
+      <div className="px-4 py-3 border-t text-xs" style={{ borderColor: 'rgba(255,255,255,0.08)', color: 'rgba(244,244,245,0.75)' }}>
+        <div>heard: <span style={{ color: '#fff' }}>write a hello contract</span></div>
+        <div>understood as: <span className="mb-accent">write_contract → diff ready</span></div>
+      </div>
+    </div>
+  );
+}
+
+function Metabox(): JSX.Element {
+  return (
+    <main className="mb-page">
+      <div className="mb-dots">
+        <div className="max-w-6xl mx-auto px-6">
+          <nav className="flex items-center justify-between py-5">
+            <div className="flex items-center gap-8">
+              <Link href="/" className="font-extrabold text-lg">◉ VoiceSol</Link>
+              <div className="mb-nav hidden md:flex">
+                <a href="#how">How it works</a>
+                <a href="#templates">Templates</a>
+                <Link href="/showcase">Showcase</Link>
+              </div>
+            </div>
+            <Link className="mb-cta" href="/app">{COPY.cta} <span aria-hidden>→</span></Link>
+          </nav>
+          <div className="mt-4">
+            <span className="mb-pill"><span className="mb-pill-new">New</span> Voice commands now parse offline with local fallback</span>
+          </div>
+          <section className="grid md:grid-cols-[1fr_320px] gap-10 mt-10 items-start">
+            <h1 className="mb-h1"><span className="mb-grad">Speak.</span><br /><span className="mb-grad">Compile.</span><br /><span className="mb-grad">Deploy.</span></h1>
+            <div className="text-sm leading-relaxed" style={{ color: 'rgba(244,244,245,0.75)' }}>
+              <p className="font-semibold text-white">Ship contracts by voice</p>
+              <p className="mt-2">Dictate commands into VoiceSol IDE — it writes the code, shows a diff, compiles in your browser, and deploys to Base Sepolia.</p>
+              <p className="mt-4"><span className="mb-dot">●</span>Review every diff before it lands</p>
+              <p className="mt-1"><span className="mb-dot">●</span>One-click verify on Basescan</p>
+              <Link className="mb-cta mt-5" href="/app">Open the IDE <span aria-hidden>→</span></Link>
+            </div>
+          </section>
+          <p className="mb-eyebrow text-center mt-16">BUILT FOR BASE SEPOLIA</p>
+          <div className="flex flex-wrap justify-center gap-2 mt-4 pb-4">
+            {MB_STACK.map((s) => <span key={s} className="mb-chip">{s}</span>)}
+          </div>
+        </div>
+        <div className="max-w-5xl mx-auto px-6 mt-10 pb-20"><EditorMock /></div>
+      </div>
+
+      <section className="max-w-6xl mx-auto px-6 py-20 text-center">
+        <p className="mb-eyebrow">DEVELOPMENT PROCESS, BY VOICE</p>
+        <p className="mt-6 text-xl md:text-2xl leading-relaxed max-w-3xl mx-auto" style={{ color: 'rgba(244,244,245,0.9)' }}>
+          Dictate your contract in plain words and edit whatever you want. Speech becomes a reviewed diff, so only code you accept reaches the compiler — <Link href="/app" className="mb-accent underline">open the IDE</Link>.
+        </p>
+      </section>
+
+      <section id="how" className="max-w-6xl mx-auto px-6 pb-20 grid md:grid-cols-2 gap-10 items-center">
+        <div>
+          <p className="mb-eyebrow">ANYWHERE &amp; ANYTIME</p>
+          <h2 className="mb-h2 mt-3">Voice-first Solidity in your browser</h2>
+          <p className="mt-4 text-sm leading-relaxed" style={{ color: 'rgba(244,244,245,0.7)' }}>
+            Prototype by speaking, then grow it into a full project. No wallet keys in the app, no typing required — compile, deploy, and interact from the same command bar.
+          </p>
+          <Link className="mb-cta mt-6" href="/app">Open the IDE <span aria-hidden>→</span></Link>
+        </div>
+        <div className="mb-window p-5 text-sm space-y-3">
+          {[['🎙️ Dictate', '“write an ERC-20 called Sol Coin…”'], ['🧾 Parse', 'Groq intent JSON + local fallback'], ['🔨 Compile', 'solc 0.8.24 + OpenZeppelin v5'], ['🚀 Deploy', 'wallet signs on Base Sepolia'], ['✅ Verify', 'one click on Basescan']].map(([t, d]) => (
+            <div key={t} className="flex gap-3 items-baseline">
+              <b className="whitespace-nowrap">{t}</b>
+              <span style={{ color: 'rgba(244,244,245,0.65)' }}>{d}</span>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section id="templates" className="mb-band-blue">
+        <div className="max-w-6xl mx-auto px-6 py-16">
+          <p className="text-xs font-bold" style={{ letterSpacing: '0.32em', opacity: 0.6 }}>TEMPLATES</p>
+          <h2 className="mb-h2 mt-3 max-w-2xl">Production-grade starting points for every standard.</h2>
+          <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-3 mt-8">
+            {MB_TEMPLATES.map(([t, d]) => (
+              <div key={t} className="mb-tcard"><b>{t}</b><p className="text-sm mt-1" style={{ opacity: 0.75 }}>{d}</p></div>
+            ))}
+          </div>
+          <Link className="mb-cta mt-8" style={{ borderColor: 'rgba(0,0,0,0.4)', color: '#101014' }} href="/app">Browse in the IDE <span aria-hidden>→</span></Link>
+        </div>
+      </section>
+
+      <section className="mb-band-green">
+        <div className="max-w-6xl mx-auto px-6 py-16">
+          <p className="text-xs font-bold" style={{ letterSpacing: '0.32em', opacity: 0.6 }}>VERIFY &amp; SHIP</p>
+          <h2 className="mb-h2 mt-3 max-w-2xl">Verified on Basescan before you finish your sentence.</h2>
+          <p className="mt-4 max-w-xl text-sm leading-relaxed" style={{ opacity: 0.8 }}>
+            After deployment, submit standard JSON to Basescan from the Deploy tab and poll until it reads “Verified”. AI reviews are clearly labeled — never a security audit.
+          </p>
+          <Link className="mb-cta mt-8" style={{ borderColor: 'rgba(0,0,0,0.4)', color: '#0c1a0b' }} href="/app">Try a deploy <span aria-hidden>→</span></Link>
+        </div>
+      </section>
+
+      <section className="mb-dots">
+        <div className="max-w-6xl mx-auto px-6 py-20 text-center">
+          <p className="mb-eyebrow">EASY TO USE</p>
+          <h2 className="mb-h2 mt-4">Deploy anywhere,<br />with <span className="mb-accent">VoiceSol</span></h2>
+          <div className="flex flex-wrap justify-center gap-2 mt-8">
+            {MB_STACK.map((s) => <span key={s} className="mb-chip">{s}</span>)}
+          </div>
+        </div>
+      </section>
+
+      <section className="max-w-6xl mx-auto px-6 pb-20">
+        <p className="mb-eyebrow text-center">FROM VOICE TO BASE SEPOLIA IN FOUR STEPS</p>
+        <div className="grid sm:grid-cols-2 md:grid-cols-4 gap-3 mt-6">
+          {MB_STEPS.map(([n, t, d]) => (
+            <div key={t} className="mb-step">
+              <div className="mb-step-num">{n}</div>
+              <b className="block mt-2 text-lg">{t}</b>
+              <p className="text-sm mt-1" style={{ color: 'rgba(244,244,245,0.65)' }}>{d}</p>
+            </div>
+          ))}
+        </div>
+        <div className="text-center mt-10"><Link className="mb-cta mb-cta-solid" href="/app">{COPY.cta} <span aria-hidden>→</span></Link></div>
+      </section>
+
+      <footer className="border-t" style={{ borderColor: 'rgba(255,255,255,0.1)' }}>
+        <div className="max-w-6xl mx-auto px-6 py-8 flex flex-col md:flex-row gap-3 items-center justify-between text-xs" style={{ color: 'rgba(244,244,245,0.55)' }}>
+          <span>◉ VoiceSol IDE · Base Sepolia 84532</span>
+          <span>Speak Solidity. Ship on Base Sepolia.</span>
+          <Link href="/app" className="underline">{COPY.cta}</Link>
+        </div>
+      </footer>
+    </main>
+  );
+}
+
 function LandingInner(): JSX.Element {
   const params = useSearchParams();
   const { landing, setLanding } = useDesign();
   useEffect(() => {
     const q = params.get('landing') as LandingVariant | null;
-    if (q && ['terminal', 'clean', 'gradient', 'editorial'].includes(q)) setLanding(q);
+    if (q && ['terminal', 'clean', 'gradient', 'editorial', 'metabox'].includes(q)) setLanding(q);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [params]);
   if (landing === 'clean') return <Clean />;
   if (landing === 'gradient') return <Gradient />;
   if (landing === 'editorial') return <Editorial />;
-  return <Terminal />;
+  if (landing === 'terminal') return <Terminal />;
+  return <Metabox />;
 }
 
 export default function LandingPage(): JSX.Element {

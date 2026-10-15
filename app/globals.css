@@ -64,6 +64,35 @@ body { font-family: var(--vs-font); }
 }
 
 .glass { background: var(--vs-card); backdrop-filter: blur(12px); border: 1px solid var(--vs-border); }
+
+/* Metabox-style landing (VoiceSol) — self-contained, theme-independent */
+.mb-page { background: #0a0a0d; color: #f4f4f5; font-family: 'Inter', system-ui, -apple-system, sans-serif; }
+.mb-dots { background-image: radial-gradient(rgba(255,255,255,0.12) 1px, transparent 1.3px); background-size: 26px 26px; }
+.mb-grad { background: linear-gradient(95deg, #c9d4ff 5%, #8fd8fc 50%, #5eead4 95%); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.mb-accent { color: #5eead4; }
+.mb-eyebrow { letter-spacing: 0.32em; font-size: 0.68rem; opacity: 0.55; font-weight: 600; }
+.mb-h1 { font-weight: 800; line-height: 0.98; letter-spacing: -0.02em; font-size: clamp(3.5rem, 11vw, 9rem); }
+.mb-h2 { font-weight: 800; letter-spacing: -0.02em; line-height: 1.02; font-size: clamp(2rem, 5.5vw, 4.25rem); }
+.mb-nav { display: flex; align-items: center; gap: 1.5rem; font-size: 0.85rem; opacity: 0.85; }
+@media (max-width: 767px) { .mb-nav { display: none; } }
+.mb-nav a:hover { opacity: 1; color: #fff; }
+.mb-pill { display: inline-flex; align-items: center; gap: 0.6rem; border: 1px solid rgba(255,255,255,0.14); background: rgba(255,255,255,0.05); border-radius: 0.5rem; padding: 0.45rem 0.9rem; font-size: 0.78rem; color: rgba(244,244,245,0.85); }
+.mb-pill-new { background: #5eead4; color: #06281f; font-weight: 700; font-size: 0.68rem; border-radius: 0.3rem; padding: 0.1rem 0.45rem; }
+.mb-cta { display: inline-flex; align-items: center; gap: 0.5rem; border: 1px solid rgba(255,255,255,0.25); border-radius: 0.5rem; padding: 0.6rem 1.2rem; font-size: 0.85rem; font-weight: 600; color: #fff; background: rgba(255,255,255,0.04); }
+.mb-cta:hover { background: rgba(255,255,255,0.1); }
+.mb-cta-solid { background: #f4f4f5; color: #0a0a0d; border-color: transparent; }
+.mb-cta-solid:hover { background: #fff; }
+.mb-chip { display: inline-flex; align-items: center; border: 1px solid rgba(255,255,255,0.14); background: rgba(255,255,255,0.05); border-radius: 0.5rem; padding: 0.5rem 0.8rem; font-size: 0.75rem; color: rgba(244,244,245,0.8); white-space: nowrap; }
+.mb-dot { color: #5eead4; margin-right: 0.5rem; }
+.mb-window { border: 1px solid rgba(255,255,255,0.14); border-radius: 0.9rem; background: #101014; box-shadow: 0 40px 120px rgba(0,0,0,0.6); overflow: hidden; }
+.mb-window-bar { display: flex; align-items: center; gap: 0.4rem; padding: 0.6rem 0.9rem; border-bottom: 1px solid rgba(255,255,255,0.08); font-size: 0.7rem; color: rgba(244,244,245,0.6); }
+.mb-traffic { width: 0.6rem; height: 0.6rem; border-radius: 9999px; }
+.mb-code { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 0.72rem; line-height: 1.65; }
+.mb-band-blue { background: #8b93ff; color: #101014; }
+.mb-band-green { background: #7cf76d; color: #0c1a0b; }
+.mb-tcard { border: 1px solid rgba(0,0,0,0.18); background: rgba(255,255,255,0.35); border-radius: 0.75rem; padding: 1rem; }
+.mb-step { border: 1px solid rgba(255,255,255,0.12); background: rgba(255,255,255,0.04); border-radius: 0.75rem; padding: 1.25rem; }
+.mb-step-num { font-size: 0.7rem; letter-spacing: 0.25em; color: #5eead4; font-weight: 700; }
 .vs-input { background: var(--vs-card); border: 1px solid var(--vs-border); color: var(--vs-fg); border-radius: var(--vs-radius); padding: 0.5rem 0.75rem; width: 100%; }
 .vs-btn { background: var(--vs-accent); color: #000; border-radius: var(--vs-radius); padding: 0.5rem 1rem; font-weight: 600; }
 .vs-btn:disabled { opacity: 0.45; cursor: not-allowed; }
