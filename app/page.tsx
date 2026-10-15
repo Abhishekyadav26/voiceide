@@ -1,8 +1,11 @@
 'use client';
 import Link from 'next/link';
 import { Suspense, useEffect, useState } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useDesign, type LandingVariant } from '@/lib/store/design';
+import { Marquee } from '@/components/magic/marquee';
+import { ShimmerButton } from '@/components/magic/shimmer-button';
+import { ShinyText } from '@/components/magic/shiny-text';
 
 const COPY = {
   headline: 'Speak Solidity. Ship on Base Sepolia.',
@@ -231,6 +234,8 @@ function EditorMock(): JSX.Element {
 }
 
 function Metabox(): JSX.Element {
+  const router = useRouter();
+  const goApp = (): void => router.push('/app');
   return (
     <main className="mb-page">
       <div className="mb-dots">
@@ -244,10 +249,10 @@ function Metabox(): JSX.Element {
                 <Link href="/showcase">Showcase</Link>
               </div>
             </div>
-            <Link className="mb-cta" href="/app">{COPY.cta} <span aria-hidden>→</span></Link>
+            <ShimmerButton onClick={goApp}>Launch App <span aria-hidden>→</span></ShimmerButton>
           </nav>
           <div className="mt-4">
-            <span className="mb-pill"><span className="mb-pill-new">New</span> Voice commands now parse offline with local fallback</span>
+            <span className="mb-pill"><span className="mb-pill-new">New</span><ShinyText>Voice commands now parse offline with local fallback</ShinyText></span>
           </div>
           <section className="grid md:grid-cols-[1fr_320px] gap-10 mt-10 items-start">
             <h1 className="mb-h1"><span className="mb-grad">Speak.</span><br /><span className="mb-grad">Compile.</span><br /><span className="mb-grad">Deploy.</span></h1>
@@ -260,8 +265,12 @@ function Metabox(): JSX.Element {
             </div>
           </section>
           <p className="mb-eyebrow text-center mt-16">BUILT FOR BASE SEPOLIA</p>
-          <div className="flex flex-wrap justify-center gap-2 mt-4 pb-4">
-            {MB_STACK.map((s) => <span key={s} className="mb-chip">{s}</span>)}
+          <div className="relative mt-2 pb-4">
+            <Marquee pauseOnHover duration="32s">
+              {MB_STACK.map((s) => <span key={s} className="mb-chip">{s}</span>)}
+            </Marquee>
+            <div className="pointer-events-none absolute inset-y-0 left-0 w-24" style={{ background: 'linear-gradient(to right, #0a0a0d, transparent)' }} />
+            <div className="pointer-events-none absolute inset-y-0 right-0 w-24" style={{ background: 'linear-gradient(to left, #0a0a0d, transparent)' }} />
           </div>
         </div>
         <div className="max-w-5xl mx-auto px-6 mt-10 pb-20"><EditorMock /></div>
@@ -321,8 +330,12 @@ function Metabox(): JSX.Element {
         <div className="max-w-6xl mx-auto px-6 py-20 text-center">
           <p className="mb-eyebrow">EASY TO USE</p>
           <h2 className="mb-h2 mt-4">Deploy anywhere,<br />with <span className="mb-accent">VoiceSol</span></h2>
-          <div className="flex flex-wrap justify-center gap-2 mt-8">
-            {MB_STACK.map((s) => <span key={s} className="mb-chip">{s}</span>)}
+          <div className="relative mt-8">
+            <Marquee pauseOnHover reverse duration="36s">
+              {MB_STACK.map((s) => <span key={s} className="mb-chip">{s}</span>)}
+            </Marquee>
+            <div className="pointer-events-none absolute inset-y-0 left-0 w-24" style={{ background: 'linear-gradient(to right, #0a0a0d, transparent)' }} />
+            <div className="pointer-events-none absolute inset-y-0 right-0 w-24" style={{ background: 'linear-gradient(to left, #0a0a0d, transparent)' }} />
           </div>
         </div>
       </section>
@@ -338,7 +351,7 @@ function Metabox(): JSX.Element {
             </div>
           ))}
         </div>
-        <div className="text-center mt-10"><Link className="mb-cta mb-cta-solid" href="/app">{COPY.cta} <span aria-hidden>→</span></Link></div>
+        <div className="text-center mt-10"><ShimmerButton onClick={goApp} shimmerColor="#ffffff" background="rgba(244,244,245,0.08)"><span style={{ color: '#fff' }}>{COPY.cta}</span> <span aria-hidden style={{ color: '#fff' }}>→</span></ShimmerButton></div>
       </section>
 
       <footer className="border-t" style={{ borderColor: 'rgba(255,255,255,0.1)' }}>

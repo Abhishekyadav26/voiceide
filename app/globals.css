@@ -60,6 +60,7 @@ body { font-family: var(--vs-font); }
 
 @media (prefers-reduced-motion: reduce) {
   .typing-caret, .wave-bar, .pipe-node { animation: none !important; }
+  .mb-marquee-track, .mb-shimmer-spark, .mb-shiny { animation: none !important; }
   * { transition: none !important; }
 }
 
@@ -82,7 +83,7 @@ body { font-family: var(--vs-font); }
 .mb-cta:hover { background: rgba(255,255,255,0.1); }
 .mb-cta-solid { background: #f4f4f5; color: #0a0a0d; border-color: transparent; }
 .mb-cta-solid:hover { background: #fff; }
-.mb-chip { display: inline-flex; align-items: center; border: 1px solid rgba(255,255,255,0.14); background: rgba(255,255,255,0.05); border-radius: 0.5rem; padding: 0.5rem 0.8rem; font-size: 0.75rem; color: rgba(244,244,245,0.8); white-space: nowrap; }
+.mb-chip { display: inline-flex; flex-shrink: 0; align-items: center; border: 1px solid rgba(255,255,255,0.14); background: rgba(255,255,255,0.05); border-radius: 0.5rem; padding: 0.5rem 0.8rem; font-size: 0.75rem; color: rgba(244,244,245,0.8); white-space: nowrap; }
 .mb-dot { color: #5eead4; margin-right: 0.5rem; }
 .mb-window { border: 1px solid rgba(255,255,255,0.14); border-radius: 0.9rem; background: #101014; box-shadow: 0 40px 120px rgba(0,0,0,0.6); overflow: hidden; }
 .mb-window-bar { display: flex; align-items: center; gap: 0.4rem; padding: 0.6rem 0.9rem; border-bottom: 1px solid rgba(255,255,255,0.08); font-size: 0.7rem; color: rgba(244,244,245,0.6); }
@@ -93,6 +94,30 @@ body { font-family: var(--vs-font); }
 .mb-tcard { border: 1px solid rgba(0,0,0,0.18); background: rgba(255,255,255,0.35); border-radius: 0.75rem; padding: 1rem; }
 .mb-step { border: 1px solid rgba(255,255,255,0.12); background: rgba(255,255,255,0.04); border-radius: 0.75rem; padding: 1.25rem; }
 .mb-step-num { font-size: 0.7rem; letter-spacing: 0.25em; color: #5eead4; font-weight: 700; }
+
+/* ---- Magic UI adaptations (CSS-only; no extra deps) ---- */
+.mb-marquee { display: flex; overflow: hidden; gap: var(--mb-gap, 1rem); padding: 0.5rem; }
+.mb-marquee-vertical { flex-direction: column; }
+.mb-marquee-track { display: flex; flex-shrink: 0; align-items: center; justify-content: space-around; gap: var(--mb-gap, 1rem); animation: mb-marquee var(--mb-duration, 40s) linear infinite; }
+.mb-marquee-vertical .mb-marquee-track { flex-direction: column; animation-name: mb-marquee-vertical; }
+.mb-marquee-pause:hover .mb-marquee-track { animation-play-state: paused; }
+@keyframes mb-marquee { to { transform: translateX(calc(-100% - var(--mb-gap, 1rem))); } }
+@keyframes mb-marquee-vertical { to { transform: translateY(calc(-100% - var(--mb-gap, 1rem))); } }
+
+.mb-shiny { background-image: linear-gradient(to right, transparent, rgba(255,255,255,0.9) 50%, transparent); background-size: var(--shiny-width, 100px) 100%; background-repeat: no-repeat; -webkit-background-clip: text; background-clip: text; color: rgba(244,244,245,0.72); animation: mb-shiny-text 3.5s linear infinite; }
+@keyframes mb-shiny-text {
+  0%, 90%, 100% { background-position: calc(-100% - var(--shiny-width, 100px)) 0; }
+  30%, 60% { background-position: calc(100% + var(--shiny-width, 100px)) 0; }
+}
+
+.mb-shimmer-btn { position: relative; z-index: 0; display: inline-flex; cursor: pointer; align-items: center; justify-content: center; overflow: hidden; white-space: nowrap; border: 1px solid rgba(255,255,255,0.15); padding: 0.7rem 1.4rem; font-weight: 600; font-size: 0.9rem; color: #fff; border-radius: var(--radius, 0.5rem); background: transparent; transition: transform 0.3s ease-in-out; }
+.mb-shimmer-btn:active { transform: translateY(1px); }
+.mb-shimmer-spark-wrap { position: absolute; inset: 0; z-index: 0; overflow: hidden; border-radius: inherit; filter: blur(2px); }
+.mb-shimmer-spark { position: absolute; left: 50%; top: 50%; width: 300%; aspect-ratio: 1; translate: -50% -50%; animation: mb-spin-around var(--speed, 3s) linear infinite; background: conic-gradient(from calc(270deg - var(--spread, 90deg) * 0.5), transparent 0, var(--shimmer-color, #5eead4) var(--spread, 90deg), transparent var(--spread, 90deg)); }
+@keyframes mb-spin-around { to { transform: rotate(1turn); } }
+.mb-shimmer-backdrop { position: absolute; inset: var(--cut, 0.06em); z-index: 1; border-radius: var(--radius, 0.5rem); background: var(--bg, rgba(10,10,13,1)); }
+.mb-shimmer-content { position: relative; z-index: 2; display: inline-flex; align-items: center; gap: 0.5rem; }
+.mb-shimmer-highlight { position: absolute; inset: 0; z-index: 3; pointer-events: none; border-radius: inherit; box-shadow: inset 0 -8px 10px rgba(255,255,255,0.12); }
 .vs-input { background: var(--vs-card); border: 1px solid var(--vs-border); color: var(--vs-fg); border-radius: var(--vs-radius); padding: 0.5rem 0.75rem; width: 100%; }
 .vs-btn { background: var(--vs-accent); color: #000; border-radius: var(--vs-radius); padding: 0.5rem 1rem; font-weight: 600; }
 .vs-btn:disabled { opacity: 0.45; cursor: not-allowed; }
