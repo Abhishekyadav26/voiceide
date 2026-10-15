@@ -232,8 +232,8 @@ function Metabox(): JSX.Element {
   const router = useRouter();
   const goApp = (): void => router.push('/app');
   return (
-    <main className="mb-page">
-      <div className="mb-dots">
+    <main className="mb-page mb-dots">
+      <div>
         <div className="max-w-6xl mx-auto px-6">
           <nav className="flex items-center justify-between py-5">
             <div className="flex items-center gap-8">
@@ -297,7 +297,7 @@ function Metabox(): JSX.Element {
         </div>
       </section>
 
-      <section id="templates" className="mb-band-blue">
+      <section id="templates" className="mb-band-blue mb-dots-light">
         <div className="max-w-6xl mx-auto px-6 py-16">
           <p className="text-xs font-bold" style={{ letterSpacing: '0.32em', opacity: 0.6 }}>TEMPLATES</p>
           <h2 className="mb-h2 mt-3 max-w-2xl">Production-grade starting points for every standard.</h2>
@@ -321,7 +321,7 @@ function Metabox(): JSX.Element {
         </div>
       </section>
 
-      <section className="mb-dots">
+      <section>
         <div className="max-w-6xl mx-auto px-6 py-20 text-center">
           <p className="mb-eyebrow">EASY TO USE</p>
           <h2 className="mb-h2 mt-4">Deploy anywhere,<br />with <span className="mb-accent">VoiceSol</span></h2>
