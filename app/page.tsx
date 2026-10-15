@@ -297,7 +297,7 @@ function Metabox(): JSX.Element {
         </div>
       </section>
 
-      <section id="templates" className="mb-band-blue mb-dots-light">
+      <section id="templates" className="mb-band-blue">
         <div className="max-w-6xl mx-auto px-6 py-16">
           <p className="text-xs font-bold" style={{ letterSpacing: '0.32em', opacity: 0.6 }}>TEMPLATES</p>
           <h2 className="mb-h2 mt-3 max-w-2xl">Production-grade starting points for every standard.</h2>
@@ -306,7 +306,7 @@ function Metabox(): JSX.Element {
               <div key={t} className="mb-tcard"><b>{t}</b><p className="text-sm mt-1" style={{ opacity: 0.75 }}>{d}</p></div>
             ))}
           </div>
-          <Link className="mb-cta mt-8" style={{ borderColor: 'rgba(0,0,0,0.4)', color: '#101014' }} href="/app">Browse in the IDE <span aria-hidden>→</span></Link>
+          <Link className="mb-cta mt-8" href="/app">Browse in the IDE <span aria-hidden>→</span></Link>
         </div>
       </section>
 
@@ -326,7 +326,7 @@ function Metabox(): JSX.Element {
           <p className="mt-6 max-w-xl text-sm leading-relaxed" style={{ opacity: 0.8 }}>
             After deployment, submit standard JSON to Basescan from the Deploy tab and poll until it reads “Verified”.
           </p>
-          <Link className="mb-cta mt-8" style={{ borderColor: 'rgba(0,0,0,0.4)', color: '#101014' }} href="/app">Try a deploy <span aria-hidden>→</span></Link>
+          <Link className="mb-cta mt-8" href="/app">Try a deploy <span aria-hidden>→</span></Link>
         </div>
       </section>
 
