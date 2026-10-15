@@ -3,7 +3,7 @@ import { useSearchParams, useRouter, usePathname } from 'next/navigation';
 import { useDesign, type LandingVariant, type IdeLayout } from '@/lib/store/design';
 
 const LANDINGS: LandingVariant[] = ['metabox', 'terminal', 'clean', 'gradient', 'editorial'];
-const THEMES = ['terminal', 'clean', 'gradient', 'editorial'];
+const THEMES = ['metabox', 'terminal', 'clean', 'gradient', 'editorial'];
 const LAYOUTS: IdeLayout[] = ['classic', 'command-first', 'split', 'wizard'];
 
 export function DesignMenu(): JSX.Element {

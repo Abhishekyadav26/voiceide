@@ -2,7 +2,7 @@ import { create } from 'zustand';
 
 export type LandingVariant = 'terminal' | 'clean' | 'gradient' | 'editorial' | 'metabox';
 export type IdeLayout = 'classic' | 'command-first' | 'split' | 'wizard';
-export type IdeTheme = 'terminal' | 'clean' | 'gradient' | 'editorial';
+export type IdeTheme = 'terminal' | 'clean' | 'gradient' | 'editorial' | 'metabox';
 export type ColorMode = 'dark' | 'light';
 
 interface DesignState {
@@ -29,7 +29,7 @@ function read<T extends string>(key: string, fallback: T): T {
 export const useDesign = create<DesignState>()((setState) => ({
   landing: 'metabox',
   layout: 'classic',
-  theme: 'terminal',
+  theme: 'metabox',
   mode: 'dark',
   demoMode: true,
   setLanding: (landing) => { setState({ landing }); try { localStorage.setItem('vs-landing', landing); } catch {} },
@@ -40,7 +40,7 @@ export const useDesign = create<DesignState>()((setState) => ({
   hydrate: () => setState({
     landing: read('vs-landing', 'metabox'),
     layout: read('vs-layout', 'classic'),
-    theme: read('vs-theme', 'terminal'),
+    theme: read('vs-theme', 'metabox'),
     mode: read('vs-mode', 'dark'),
   }),
 }));
