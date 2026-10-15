@@ -310,14 +310,23 @@ function Metabox(): JSX.Element {
         </div>
       </section>
 
-      <section className="mb-band-green">
+      <section className="mb-band-blue mb-dots-light">
         <div className="max-w-6xl mx-auto px-6 py-16">
           <p className="text-xs font-bold" style={{ letterSpacing: '0.32em', opacity: 0.6 }}>VERIFY &amp; SHIP</p>
           <h2 className="mb-h2 mt-3 max-w-2xl">Verified on Basescan before you finish your sentence.</h2>
-          <p className="mt-4 max-w-xl text-sm leading-relaxed" style={{ opacity: 0.8 }}>
-            After deployment, submit standard JSON to Basescan from the Deploy tab and poll until it reads “Verified”. AI reviews are clearly labeled — never a security audit.
+          <div className="grid sm:grid-cols-3 gap-3 mt-8">
+            {[
+              ['Submit', 'Standard JSON goes to Basescan straight from the Deploy tab.'],
+              ['Poll', 'Status is polled until it reads Verified — or fails loudly.'],
+              ['Trust', 'AI reviews are clearly labeled — never a security audit.'],
+            ].map(([t, d]) => (
+              <div key={t} className="mb-tcard"><b>{t}</b><p className="text-sm mt-1" style={{ opacity: 0.75 }}>{d}</p></div>
+            ))}
+          </div>
+          <p className="mt-6 max-w-xl text-sm leading-relaxed" style={{ opacity: 0.8 }}>
+            After deployment, submit standard JSON to Basescan from the Deploy tab and poll until it reads “Verified”.
           </p>
-          <Link className="mb-cta mt-8" href="/app">Try a deploy <span aria-hidden>→</span></Link>
+          <Link className="mb-cta mt-8" style={{ borderColor: 'rgba(0,0,0,0.4)', color: '#101014' }} href="/app">Try a deploy <span aria-hidden>→</span></Link>
         </div>
       </section>
 
