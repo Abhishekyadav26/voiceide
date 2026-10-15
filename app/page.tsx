@@ -363,12 +363,13 @@ function Metabox(): JSX.Element {
 
 function LandingInner(): JSX.Element {
   const params = useSearchParams();
-  const { landing, setLanding } = useDesign();
+  const { landing, setLanding, hydrated } = useDesign();
   useEffect(() => {
+    if (!hydrated) return;
     const q = params.get('landing') as LandingVariant | null;
     if (q && ['terminal', 'clean', 'gradient', 'editorial', 'metabox'].includes(q)) setLanding(q);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [params]);
+  }, [params, hydrated]);
   if (landing === 'clean') return <Clean />;
   if (landing === 'gradient') return <Gradient />;
   if (landing === 'editorial') return <Editorial />;

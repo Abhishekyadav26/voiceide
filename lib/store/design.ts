@@ -11,6 +11,7 @@ interface DesignState {
   theme: IdeTheme;
   mode: ColorMode;
   demoMode: boolean;
+  hydrated: boolean;
   setLanding: (v: LandingVariant) => void;
   setLayout: (v: IdeLayout) => void;
   setTheme: (v: IdeTheme) => void;
@@ -19,11 +20,12 @@ interface DesignState {
   hydrate: () => void;
 }
 
-function read<T extends string>(key: string, fallback: T): T {
+function stored(key: string): string | null {
   try {
-    const v = localStorage.getItem(key);
-    return (v as T) ?? fallback;
-  } catch { return fallback; }
+    return localStorage.getItem(key);
+  } catch {
+    return null;
+  }
 }
 
 export const useDesign = create<DesignState>()((setState) => ({
@@ -32,15 +34,25 @@ export const useDesign = create<DesignState>()((setState) => ({
   theme: 'metabox',
   mode: 'dark',
   demoMode: true,
+  hydrated: false,
   setLanding: (landing) => { setState({ landing }); try { localStorage.setItem('vs-landing', landing); } catch {} },
   setLayout: (layout) => { setState({ layout }); try { localStorage.setItem('vs-layout', layout); } catch {} },
   setTheme: (theme) => { setState({ theme }); try { localStorage.setItem('vs-theme', theme); } catch {} },
   setMode: (mode) => { setState({ mode }); try { localStorage.setItem('vs-mode', mode); } catch {} },
   setDemoMode: (demoMode) => setState({ demoMode }),
-  hydrate: () => setState({
-    landing: read('vs-landing', 'metabox'),
-    layout: read('vs-layout', 'classic'),
-    theme: read('vs-theme', 'metabox'),
-    mode: read('vs-mode', 'dark'),
+  // Only keys actually stored override the defaults, so explicit ?landing= / ?layout=
+  // params applied later always win over defaults but never lose to them.
+  hydrate: () => setState((s) => {
+    const next: Partial<DesignState> = { hydrated: true };
+    const landing = stored('vs-landing');
+    const layout = stored('vs-layout');
+    const theme = stored('vs-theme');
+    const mode = stored('vs-mode');
+    if (landing) next.landing = landing as DesignState['landing'];
+    if (layout) next.layout = layout as DesignState['layout'];
+    if (theme) next.theme = theme as DesignState['theme'];
+    if (mode) next.mode = mode as DesignState['mode'];
+    void s;
+    return next;
   }),
 }));

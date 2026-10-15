@@ -1,4 +1,5 @@
 'use client';
+import { useState } from 'react';
 import { useSearchParams, useRouter, usePathname } from 'next/navigation';
 import { useDesign, type LandingVariant, type IdeLayout } from '@/lib/store/design';
 
@@ -11,6 +12,7 @@ export function DesignMenu(): JSX.Element {
   const params = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
+  const [open, setOpen] = useState(() => typeof window === 'undefined' || window.innerWidth >= 768);
   if (!demoMode && params.get('demo') !== '1') return <></>;
 
   const share = (key: string, value: string): void => {
@@ -19,9 +21,19 @@ export function DesignMenu(): JSX.Element {
     router.replace(`${pathname}?${next.toString()}`);
   };
 
+  if (!open) {
+    return (
+      <button className="fixed bottom-3 right-3 z-50 vs-btn-ghost text-xs" style={{ background: 'var(--vs-card)' }} onClick={() => setOpen(true)} aria-label="Open design switcher">
+        Design
+      </button>
+    );
+  }
+
   return (
-    <div className="fixed bottom-3 right-3 z-50 vs-card flex flex-col gap-2 text-xs" aria-label="Design switcher">
-      <span className="font-bold">Design</span>
+    <div className="fixed bottom-3 right-3 z-50 vs-card flex flex-col gap-2 text-xs max-h-[70vh] overflow-auto" aria-label="Design switcher">
+      <span className="font-bold flex items-center justify-between gap-4">Design
+        <button className="vs-btn-ghost px-2 py-0.5" onClick={() => setOpen(false)} aria-label="Close design switcher">✕</button>
+      </span>
       <label>Landing
         <select className="vs-input ml-1" value={landing} onChange={(e) => { setLanding(e.target.value as LandingVariant); share('landing', e.target.value); }}>
           {LANDINGS.map((l) => <option key={l} value={l}>{l}</option>)}

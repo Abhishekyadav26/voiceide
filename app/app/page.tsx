@@ -40,10 +40,13 @@ function Split(): JSX.Element {
         <b>VoiceSol</b>
       </div>
       <NetworkBanner />
-      <div className="flex flex-1 min-h-0">
-        {drawer && <aside className="w-56 border-r overflow-auto" style={{ borderColor: 'var(--vs-border)' }}><FileTree /></aside>}
-        <main className="flex-1 min-w-0 flex flex-col"><EditorPane /><CommandBar /></main>
-        <aside className="w-96 border-l overflow-auto" style={{ borderColor: 'var(--vs-border)' }}><RightPanel /></aside>
+      <div className="flex flex-1 min-h-0 flex-col overflow-y-auto md:flex-row md:overflow-hidden">
+        {drawer && <aside className="w-full shrink-0 border-b overflow-auto md:w-56 md:border-b-0 md:border-r" style={{ borderColor: 'var(--vs-border)' }}><FileTree /></aside>}
+        <main className="flex min-w-0 flex-col min-h-[75vh] md:min-h-0 md:flex-1">
+          <div className="flex-1 min-h-[50vh] md:min-h-0"><EditorPane /></div>
+          <CommandBar />
+        </main>
+        <aside className="w-full shrink-0 border-t md:w-96 md:border-t-0 md:border-l" style={{ borderColor: 'var(--vs-border)' }}><FileTree /><RightPanel /></aside>
       </div>
       <DiffModal />
     </div>
@@ -88,22 +91,29 @@ function Wizard(): JSX.Element {
 
 function AppInner(): JSX.Element {
   const params = useSearchParams();
-  const { layout, setLayout } = useDesign();
+  const { layout, setLayout, hydrated } = useDesign();
   useEffect(() => {
+    if (!hydrated) return;
     const q = params.get('layout') as IdeLayout | null;
     if (q && ['classic', 'command-first', 'split', 'wizard'].includes(q)) setLayout(q);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [params, hydrated]);
+  useEffect(() => {
     const onKey = (e: KeyboardEvent): void => {
       if (e.key === 'Escape') useIde.getState().setPendingDiff(null);
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's') { e.preventDefault(); void useIde.getState().persist(); }
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [params]);
-  useEffect(() => {
-    if (window.innerWidth < 1100 && (layout === 'classic' || layout === 'command-first')) setLayout('split');
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+  useEffect(() => {
+    if (!hydrated) return;
+    if (window.innerWidth < 1100) {
+      const cur = useDesign.getState().layout;
+      if (cur === 'classic' || cur === 'command-first') setLayout('split');
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [hydrated]);
   if (layout === 'command-first') return <CommandFirst />;
   if (layout === 'split') return <Split />;
   if (layout === 'wizard') return <Wizard />;
